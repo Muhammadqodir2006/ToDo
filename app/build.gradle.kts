@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "uz.itschool.todo"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "uz.itschool.todo"
@@ -33,7 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    viewBinding.enable
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -47,4 +49,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+
 }
