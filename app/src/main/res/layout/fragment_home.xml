@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="28dp"
-        android:text="5 tasks today"
+        android:text="@string/_5_tasks_today"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="32sp"
@@ -70,7 +70,7 @@
         android:layout_marginBottom="24dp"
         android:backgroundTint="#00B8D4"
         android:drawableLeft="@drawable/add_icon"
-        android:text="Add task"
+        android:text="@string/add_task"
         app:elevation="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,7 +87,11 @@
         app:layout_constraintVertical_bias="0.0"
         tools:layout_editor_absoluteX="16dp" >
 
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_recycler_vw"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
     </androidx.cardview.widget.CardView>
 
 

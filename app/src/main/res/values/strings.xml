@@ -2,4 +2,6 @@
     <string name="app_name">ToDo</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_task">Add task</string>
+    <string name="_5_tasks_today">5 tasks today</string>
 </resources>
