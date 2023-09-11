@@ -71,6 +71,8 @@
         android:backgroundTint="#00B8D4"
         android:drawableLeft="@drawable/add_icon"
         android:text="@string/add_task"
+        android:textColor="@color/white"
+        android:drawableTint="@color/white"
         app:elevation="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

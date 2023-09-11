@@ -11,14 +11,13 @@ import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import uz.itschool.todo.R
+import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 
 
-class HomeRecyclerAdapter(val context : Context) : RecyclerView.Adapter<HomeRecyclerAdapter.MyHoler>() {
-    var tasks = ArrayList<Task>()
-    init {
-        TODO("Update tasks")
-    }
+class HomeRecyclerAdapter(val context : Context,  appDatabase: AppDatabase, day:Int, month:Int, year:Int) : RecyclerView.Adapter<HomeRecyclerAdapter.MyHoler>() {
+    var tasks = appDatabase.getTaskDao().getUndone(day, month, year)
+
 
     inner class MyHoler(itemView: View):RecyclerView.ViewHolder(itemView){
         val checkBox = itemView.findViewById<AppCompatCheckBox>(R.id.home_item_checkbox)

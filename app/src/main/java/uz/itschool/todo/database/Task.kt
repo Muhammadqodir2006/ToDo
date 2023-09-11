@@ -1,13 +1,17 @@
 package uz.itschool.todo.database
 
-// TODO: Change for data class and edit to use for database
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "tasks")
 data class Task(
-    val id: Int = 0,
-    val day: Int,
-    val month : Int,
-    val year : Int,
-    val text : String,
-    val imageUrl :String,
-    var state : Boolean = false
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    var day: Int,
+    var month : Int,
+    var year : Int,
+    var text : String,
+    @ColumnInfo(name = "image_url") var imageUrl :String,
+    var state : Int = 0
 
 )

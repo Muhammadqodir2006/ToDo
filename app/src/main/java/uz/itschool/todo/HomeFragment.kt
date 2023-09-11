@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import uz.itschool.todo.adapter.HomeRecyclerAdapter
+import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 import uz.itschool.todo.databinding.FragmentHomeBinding
 import java.time.LocalDate
@@ -18,6 +19,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val appDatabase = AppDatabase.getInstance(requireContext())
         binding.homeAddTaskBtn.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addTaskFragment)
         }
@@ -28,18 +30,16 @@ class HomeFragment : Fragment() {
         val today = LocalDate.now()
 
         binding.homeDay.text = today.dayOfMonth.toString()
-        binding.homeMonthYear.text = today.month.name
+        binding.homeMonthYear.text = "${today.month.name}, ${today.year}"
 
-        //TODO: get count
-        binding.homeTasksCount.text
+        binding.homeTasksCount.text = appDatabase.getTaskDao().getUndone(today.dayOfMonth, today.monthValue, today.year).size.toString() + " tasks for today"
 
         ////////////////////////////////
 
         val tasks = ArrayList<Task>()
 
         binding.homeRecyclerVw.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.homeRecyclerVw.adapter = HomeRecyclerAdapter(requireContext())
-        // TODO: Add Recycler
+        binding.homeRecyclerVw.adapter = HomeRecyclerAdapter(requireContext(), appDatabase, today.dayOfMonth, today.monthValue, today.year)
 
         return binding.root
     }

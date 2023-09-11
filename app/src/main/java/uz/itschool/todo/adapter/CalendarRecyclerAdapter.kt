@@ -26,7 +26,7 @@ class CalendarRecyclerAdapter(val tasks:ArrayList<Task>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
         holder.texT.text = tasks[position].text
-        if (!tasks[position].state) holder.cardView.setCardBackgroundColor(Color.rgb(255,36,36))
+        if (tasks[position].state == 0) holder.cardView.setCardBackgroundColor(Color.rgb(255,36,36))
 
     }
 }
