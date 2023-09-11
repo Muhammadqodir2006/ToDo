@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import uz.itschool.todo.adapter.CalendarRecyclerAdapter
+import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 import uz.itschool.todo.databinding.FragmentCalendarBinding
+import java.time.LocalDate
 
 class CalendarFragment : Fragment() {
 
@@ -17,19 +19,27 @@ class CalendarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentCalendarBinding.inflate(inflater, container, false)
+        val appDatabase = AppDatabase.getInstance(requireContext())
+
         binding.calendarBackBtn.setOnClickListener {
             requireActivity().onBackPressed()
         }
         binding.calendarTasksRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         // TODO: specify tasks
-        val tasks = ArrayList<Task>()
+        val today = LocalDate.now()
+        var tasks = appDatabase.getTaskDao().getTasks(today.dayOfMonth, today.monthValue, today.year)
         binding.calendarTasksRecycler.adapter = CalendarRecyclerAdapter(tasks)
 
 
         //////////////////////////
 
         binding.calendarDatePicker.setOnDateChangedListener { datePicker, i, i2, i3 ->
-            //TODO: Update recycler
+            val datepicker = binding.calendarDatePicker
+            val day = datepicker.dayOfMonth
+            val month = datepicker.month+1
+            val year = datepicker.year
+            tasks = appDatabase.getTaskDao().getTasks(day, month, year)
+            binding.calendarTasksRecycler.adapter = CalendarRecyclerAdapter(tasks)
         }
 
         return binding.root

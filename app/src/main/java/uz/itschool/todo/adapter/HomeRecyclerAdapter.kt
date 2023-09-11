@@ -15,8 +15,8 @@ import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 
 
-class HomeRecyclerAdapter(val context : Context,  appDatabase: AppDatabase, day:Int, month:Int, year:Int) : RecyclerView.Adapter<HomeRecyclerAdapter.MyHoler>() {
-    var tasks = appDatabase.getTaskDao().getUndone(day, month, year)
+class HomeRecyclerAdapter(val context : Context, val appDatabase: AppDatabase, day:Int, month:Int, year:Int) : RecyclerView.Adapter<HomeRecyclerAdapter.MyHoler>() {
+    var tasks = appDatabase.getTaskDao().getUndone(day, month, year) as ArrayList<Task>
 
 
     inner class MyHoler(itemView: View):RecyclerView.ViewHolder(itemView){
@@ -34,20 +34,25 @@ class HomeRecyclerAdapter(val context : Context,  appDatabase: AppDatabase, day:
     }
 
     override fun onBindViewHolder(holder: MyHoler, position: Int) {
+        val task = tasks[position]
         holder.edit.isEnabled = false
+        holder.edit.visibility = View.INVISIBLE
         holder.checkBox.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder.setMessage("Do you really want to delete this task ?")
             builder.setCancelable(true)
             builder.setPositiveButton("Yes",
                 DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
-                    //TODO: Delete the task
+                    task.state = 1
+                    appDatabase.getTaskDao().updateState(task)
+                    tasks.remove(task)
+                    notifyItemRemoved(position)
                 } as DialogInterface.OnClickListener)
             builder.setNegativeButton("No",
                 DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
                     dialog.cancel()
                 } as DialogInterface.OnClickListener)
-
+            holder.checkBox.isChecked = false
             val alertDialog = builder.create()
             alertDialog.show()
         }

@@ -9,8 +9,9 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import uz.itschool.todo.R
 import uz.itschool.todo.database.Task
+import java.time.LocalDate
 
-class CalendarRecyclerAdapter(val tasks:ArrayList<Task>) : RecyclerView.Adapter<CalendarRecyclerAdapter.MyHolder>(){
+class CalendarRecyclerAdapter(val tasks:List<Task>) : RecyclerView.Adapter<CalendarRecyclerAdapter.MyHolder>(){
     inner class MyHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val texT = itemView.findViewById<TextView>(R.id.calendar_item_text)
         val cardView = itemView.findViewById<CardView>(R.id.calendar_item_parent)
@@ -25,8 +26,19 @@ class CalendarRecyclerAdapter(val tasks:ArrayList<Task>) : RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
-        holder.texT.text = tasks[position].text
+        val task = tasks[position]
+        holder.texT.text = task.text
         if (tasks[position].state == 0) holder.cardView.setCardBackgroundColor(Color.rgb(255,36,36))
-
+        val today = LocalDate.now()
+        if (task.year >= today.year){
+            if (task.year > today.year) holder.cardView.setCardBackgroundColor(Color.rgb(111, 192, 255))
+            else{
+                if (task.month > today.monthValue) holder.cardView.setCardBackgroundColor(Color.rgb(111, 192, 255))
+                else{
+                    if (task.month == today.monthValue && task.day > today.dayOfMonth) holder.cardView.setCardBackgroundColor(Color.rgb(111, 192, 255))
+                }
+            }
+        }
     }
+
 }
