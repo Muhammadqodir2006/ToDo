@@ -1,5 +1,6 @@
 package uz.itschool.todo.adapter
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -15,7 +16,7 @@ import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 
 
-class HomeRecyclerAdapter(val context : Context, val appDatabase: AppDatabase, day:Int, month:Int, year:Int) : RecyclerView.Adapter<HomeRecyclerAdapter.MyHoler>() {
+class HomeRecyclerAdapter(val context : Context, val appDatabase: AppDatabase, day:Int, month:Int, year:Int, val activity: Activity, val homeRecyclerInterface: HomeRecyclerInterface) : RecyclerView.Adapter<HomeRecyclerAdapter.MyHoler>() {
     var tasks = appDatabase.getTaskDao().getUndone(day, month, year) as ArrayList<Task>
 
 
@@ -35,8 +36,6 @@ class HomeRecyclerAdapter(val context : Context, val appDatabase: AppDatabase, d
 
     override fun onBindViewHolder(holder: MyHoler, position: Int) {
         val task = tasks[position]
-        holder.edit.isEnabled = false
-        holder.edit.visibility = View.INVISIBLE
         holder.checkBox.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder.setMessage("Do you really want to delete this task ?")
@@ -44,7 +43,7 @@ class HomeRecyclerAdapter(val context : Context, val appDatabase: AppDatabase, d
             builder.setPositiveButton("Yes",
                 DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
                     task.state = 1
-                    appDatabase.getTaskDao().updateState(task)
+                    appDatabase.getTaskDao().updateTask(task)
                     tasks.remove(task)
                     notifyItemRemoved(position)
                 } as DialogInterface.OnClickListener)
@@ -57,5 +56,11 @@ class HomeRecyclerAdapter(val context : Context, val appDatabase: AppDatabase, d
             alertDialog.show()
         }
         holder.text.text = tasks[position].text
+        holder.edit.setOnClickListener {
+            homeRecyclerInterface.navigateEdit(task)
+        }
+    }
+    interface HomeRecyclerInterface{
+        fun navigateEdit(task: Task)
     }
 }

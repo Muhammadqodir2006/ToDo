@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import uz.itschool.todo.adapter.HomeRecyclerAdapter
@@ -39,7 +40,13 @@ class HomeFragment : Fragment() {
         val tasks = ArrayList<Task>()
 
         binding.homeRecyclerVw.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.homeRecyclerVw.adapter = HomeRecyclerAdapter(requireContext(), appDatabase, today.dayOfMonth, today.monthValue, today.year)
+        binding.homeRecyclerVw.adapter = HomeRecyclerAdapter(requireContext(), appDatabase, today.dayOfMonth, today.monthValue, today.year, requireActivity(), object : HomeRecyclerAdapter.HomeRecyclerInterface{
+            override fun navigateEdit(task: Task) {
+                val bundle = Bundle()
+                bundle.putSerializable("param1", task)
+                findNavController().navigate(R.id.action_homeFragment_to_addTaskFragment, bundle)
+            }
+        })
 
         return binding.root
     }

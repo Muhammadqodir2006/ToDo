@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import java.time.Month
 
 @Dao
 interface TaskDao {
@@ -23,5 +22,5 @@ interface TaskDao {
     fun deleteTask(task: Task)
 
     @Update
-    fun updateState(task: Task)
+    fun updateTask(task: Task)
 }

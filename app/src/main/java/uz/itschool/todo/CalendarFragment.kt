@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import uz.itschool.todo.adapter.CalendarRecyclerAdapter
 import uz.itschool.todo.database.AppDatabase
@@ -27,8 +28,14 @@ class CalendarFragment : Fragment() {
         binding.calendarTasksRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         // TODO: specify tasks
         val today = LocalDate.now()
-        var tasks = appDatabase.getTaskDao().getTasks(today.dayOfMonth, today.monthValue, today.year)
-        binding.calendarTasksRecycler.adapter = CalendarRecyclerAdapter(tasks)
+        var tasks = appDatabase.getTaskDao().getTasks(today.dayOfMonth, today.monthValue, today.year) as ArrayList<Task>
+        binding.calendarTasksRecycler.adapter = CalendarRecyclerAdapter(tasks, appDatabase, requireContext(), object : CalendarRecyclerAdapter.CalendarRecyclerInterface{
+            override fun editTask(task: Task) {
+                val bundle = Bundle()
+                bundle.putSerializable("param1", task)
+                findNavController().navigate(R.id.action_calendarFragment_to_addTaskFragment, bundle)
+            }
+        })
 
 
         //////////////////////////
@@ -38,11 +45,18 @@ class CalendarFragment : Fragment() {
             val day = datepicker.dayOfMonth
             val month = datepicker.month+1
             val year = datepicker.year
-            tasks = appDatabase.getTaskDao().getTasks(day, month, year)
-            binding.calendarTasksRecycler.adapter = CalendarRecyclerAdapter(tasks)
+            tasks = appDatabase.getTaskDao().getTasks(day, month, year) as ArrayList<Task>
+            binding.calendarTasksRecycler.adapter = CalendarRecyclerAdapter(tasks, appDatabase, requireContext(), object : CalendarRecyclerAdapter.CalendarRecyclerInterface{
+                override fun editTask(task: Task) {
+                    val bundle = Bundle()
+                    bundle.putSerializable("param1", task)
+                    findNavController().navigate(R.id.action_calendarFragment_to_addTaskFragment, bundle)
+                }
+            })
         }
 
         return binding.root
     }
+
 
 }
