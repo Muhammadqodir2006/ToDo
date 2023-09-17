@@ -75,13 +75,35 @@
                 app:layout_constraintTop_toBottomOf="@+id/add_task_image" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_task_edit_camera"
                 android:layout_width="wrap_content"
-                android:id="@+id/add_task_edit_img"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:padding="0dp"
-                android:src="@drawable/edit_icon"
+                android:src="@drawable/camera_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/add_task_image"
                 app:layout_constraintStart_toEndOf="@+id/add_task_image" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_task_edit_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="0dp"
+                android:src="@drawable/galley_icon"
+                app:layout_constraintBottom_toTopOf="@+id/add_task_edit_camera"
+                app:layout_constraintStart_toEndOf="@+id/add_task_image" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_task_edit_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="0dp"
+                android:src="@drawable/delete_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/add_task_image"
+                app:layout_constraintStart_toEndOf="@+id/add_task_edit_gallery" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -99,7 +121,7 @@
             <ImageView
                 android:id="@+id/add_task_image"
                 android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/icon_main_50"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -1,12 +1,14 @@
 package uz.itschool.todo
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 import uz.itschool.todo.databinding.FragmentAddTaskBinding
@@ -17,17 +19,29 @@ private const val ARG_PARAM1 = "param1"
 class AddTaskFragment : Fragment() {
     private var param1: Task? = null
 
+    var imageUrl: String = ""
+    lateinit var binding:FragmentAddTaskBinding
+    val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        val galleryUri = it
+        try{
+            binding.addTaskImage.setImageURI(galleryUri)
+            imageUrl = galleryUri.toString()
+        }catch(e:Exception){
+            e.printStackTrace()
+        }
+
+    }
+    @SuppressLint("SetTextI18n")
     override fun
             onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentAddTaskBinding.inflate(inflater, container, false)
+        binding = FragmentAddTaskBinding.inflate(inflater, container, false)
         val appDatabase = AppDatabase.getInstance(requireContext())
         binding.addTaskBackBtn.setOnClickListener {
             requireActivity().onBackPressed()
         }
-        var imageUrl: String = ""
         binding.addTasKDatePicker.minDate = Date().time
         binding.addTaskAddBtn.isEnabled = false
 
@@ -37,7 +51,7 @@ class AddTaskFragment : Fragment() {
             binding.addTaskTaskEdittxt.setText(param1!!.text)
             binding.addTasKDatePicker.init(param1!!.year, param1!!.month-1, param1!!.day, null)
             binding.addTaskAddBtn.isEnabled = true
-            // TODO: Change the image
+            if (param1!!.imageUrl != "") binding.addTaskImage.setImageURI(Uri.parse(param1!!.imageUrl))
             binding.addTaskImage
         }
 
@@ -46,10 +60,14 @@ class AddTaskFragment : Fragment() {
                 binding.addTaskTaskEdittxt.text.toString().isNotEmpty()
         }
 
-        binding.addTaskEditImg.setOnClickListener {
-            // TODO: ImagePicker
+        binding.addTaskEditGallery.setOnClickListener {
+            galleryLauncher.launch("image/*")
         }
-
+        binding.addTaskEditDelete.setOnClickListener {
+            binding.addTaskImage.setImageResource(R.drawable.icon_main_50)
+            imageUrl = ""
+        }
+        binding.addTaskEditCamera.visibility = View.GONE
         binding.addTaskAddBtn.setOnClickListener {
             val day: Int = binding.addTasKDatePicker.dayOfMonth
             val month: Int = binding.addTasKDatePicker.month + 1
@@ -68,7 +86,7 @@ class AddTaskFragment : Fragment() {
                     )
                 )
             }else{
-                var task = param1!!
+                val task = param1!!
                 task.day = day
                 task.month = month
                 task.year = year
@@ -81,6 +99,7 @@ class AddTaskFragment : Fragment() {
 
         return binding.root
     }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
