@@ -29,7 +29,6 @@ class AddTaskFragment : Fragment() {
         }catch(e:Exception){
             e.printStackTrace()
         }
-
     }
     @SuppressLint("SetTextI18n")
     override fun
