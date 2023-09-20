@@ -3,24 +3,48 @@ package uz.itschool.todo
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 import uz.itschool.todo.databinding.FragmentAddTaskBinding
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Date
 
 private const val ARG_PARAM1 = "param1"
 
 class AddTaskFragment : Fragment() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    arguments?.let {
+        param1 = it.getSerializable(ARG_PARAM1) as Task
+    }
+}
+
+    companion object {
+        fun newInstance(param1: Task) =
+            AddTaskFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARG_PARAM1, param1)
+                }
+            }
+    }
+
+
     private var param1: Task? = null
 
     var imageUrl: String = ""
     lateinit var binding:FragmentAddTaskBinding
+    private lateinit var currentFilePath: String
     val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryUri = it
         try{
@@ -31,6 +55,7 @@ class AddTaskFragment : Fragment() {
         }
 
     }
+
     @SuppressLint("SetTextI18n")
     override fun
             onCreateView(
@@ -94,6 +119,13 @@ class AddTaskFragment : Fragment() {
                 task.imageUrl = imageUrl
                 appDatabase.getTaskDao().updateTask(task)
             }
+            // TODO:
+            val openInputStream = requireActivity().contentResolver?.openInputStream(uri)
+            val file = File(requireActivity().filesDir, "${System.currentTimeMillis()}.jpg")
+            val fileOutputStream = FileOutputStream(file)
+            openInputStream?.copyTo(fileOutputStream)
+            currentFilePath = file.absolutePath
+            openInputStream?.close()
             requireActivity().onBackPressed()
         }
 
@@ -101,21 +133,41 @@ class AddTaskFragment : Fragment() {
     }
 
 
+    private fun dispatchTakePictureIntent() {
+        val photoFile: File? = try {
+            createImageFile()
+        } catch (ex: IOException) {
+            null
+        }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getSerializable(ARG_PARAM1) as Task
+        photoFile?.let {
+            val photoURI: Uri = FileProvider.getUriForFile(
+                requireContext(),
+                "uz.itteacher.tasktodo",
+                it
+            )
+            takePhotoResultCamera.launch(photoURI)
         }
     }
-
-    companion object {
-        fun newInstance(param1: Task) =
-            AddTaskFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(ARG_PARAM1, param1)
-                }
-            }
+    val takePhotoResultCamera = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+        if (it) {
+            val uri = Uri.fromFile(File(currentFilePath))
+            imageUrl = uri.toString()
+            binding.addTaskImage.setImageURI(uri)
+        }
+    }
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentFilePath = absolutePath
+        }
     }
 
 
