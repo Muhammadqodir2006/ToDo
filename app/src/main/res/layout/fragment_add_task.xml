@@ -12,6 +12,20 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addtask_delete"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="@color/red"
+                android:text="Delete"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/add_task_back_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/add_task_back_btn" />
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/add_task_back_btn"
                 android:layout_width="wrap_content"
@@ -24,16 +38,15 @@
 
             <TextView
                 android:id="@+id/add_task_top_text"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="56dp"
                 android:layout_width="0dp"
-                android:textAlignment="center"
-                android:text="New task"
-                android:textStyle="bold"
-                android:textSize="28sp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="New task"
+                android:textAlignment="center"
+                android:textSize="28sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/add_task_back_btn"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/addtask_delete"
                 app:layout_constraintStart_toEndOf="@+id/add_task_back_btn"
                 app:layout_constraintTop_toTopOf="@+id/add_task_back_btn" />
 

@@ -30,11 +30,11 @@ class HomeFragment : Fragment() {
 
         val today = LocalDate.now()
 
-        binding.homeDay.text = today.dayOfMonth.toString()
-        binding.homeMonthYear.text = "${today.month.name}, ${today.year}"
-
-        binding.homeTasksCount.text = appDatabase.getTaskDao().getUndone(today.dayOfMonth, today.monthValue, today.year).size.toString() + " tasks for today"
-
+        binding.homeDay.text = today.dayOfWeek.name.lowercase().capitalize()
+        binding.homeMonthYear.text = "${today.dayOfMonth}th ${today.month.name.lowercase().capitalize()}, ${today.year}"
+        val taskCount = appDatabase.getTaskDao().getUndone(today.dayOfMonth, today.monthValue, today.year).size
+        binding.homeTasksCount.text =  "$taskCount tasks for today"
+        if (taskCount == 0) binding.homeTasksCount.text =   "No tasks for today"
         ////////////////////////////////
 
         val tasks = ArrayList<Task>()

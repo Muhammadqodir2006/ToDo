@@ -1,6 +1,8 @@
 package uz.itschool.todo
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -71,6 +73,27 @@ class AddTaskFragment : Fragment() {
         binding.addTaskBackBtn.setOnClickListener {
             requireActivity().onBackPressed()
         }
+        if (param1 == null){
+            binding.addtaskDelete.visibility = View.GONE
+        }else{
+            binding.addtaskDelete.setOnClickListener {
+
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("Do you really want to delete this task ?")
+                builder.setCancelable(true)
+                builder.setPositiveButton("Yes",
+                    DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
+                        appDatabase.getTaskDao().deleteTask(param1!!)
+                        requireActivity().onBackPressed()
+                    } as DialogInterface.OnClickListener)
+                builder.setNegativeButton("No",
+                    DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
+                        dialog.cancel()
+                    } as DialogInterface.OnClickListener)
+                val alertDialog = builder.create()
+                alertDialog.show()
+            }
+        }
         binding.addTasKDatePicker.minDate = Date().time
         binding.addTaskAddBtn.isEnabled = false
 
@@ -131,8 +154,8 @@ class AddTaskFragment : Fragment() {
                 task.imageUrl = imageUrl
                 appDatabase.getTaskDao().updateTask(task)
             }
+            requireActivity().onBackPressed()
         }
-
         return binding.root
     }
 
@@ -147,7 +170,7 @@ class AddTaskFragment : Fragment() {
         photoFile?.let {
             val photoURI: Uri = FileProvider.getUriForFile(
                 requireContext(),
-                "uz.itteacher.tasktodo",
+                "uz.itschool.todo",
                 it
             )
             takePhotoResultCamera.launch(photoURI)
