@@ -15,7 +15,6 @@ import uz.itschool.todo.database.AppDatabase
 import uz.itschool.todo.database.Task
 import uz.itschool.todo.databinding.FragmentAddTaskBinding
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,22 +22,13 @@ import java.util.Date
 private const val ARG_PARAM1 = "param1"
 
 class AddTaskFragment : Fragment() {
+    var cameraPicture = false
     override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let {
         param1 = it.getSerializable(ARG_PARAM1) as Task
     }
 }
-
-    companion object {
-        fun newInstance(param1: Task) =
-            AddTaskFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(ARG_PARAM1, param1)
-                }
-            }
-    }
-
 
     private var param1: Task? = null
 
@@ -48,8 +38,23 @@ class AddTaskFragment : Fragment() {
     val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryUri = it
         try{
+            try {
+                File(imageUrl).delete()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+            cameraPicture = false
             binding.addTaskImage.setImageURI(galleryUri)
             imageUrl = galleryUri.toString()
+
+//            val openInputStream = requireActivity().contentResolver?.openInputStream(Uri.parse(imageUrl))
+//            val file = File(requireActivity().filesDir, "${System.currentTimeMillis()}.jpg")
+//            val fileOutputStream = FileOutputStream(file)
+//            openInputStream?.copyTo(fileOutputStream)
+//            currentFilePath = file.absolutePath
+//            openInputStream?.close()
+
+            requireActivity().onBackPressed()
         }catch(e:Exception){
             e.printStackTrace()
         }
@@ -88,10 +93,18 @@ class AddTaskFragment : Fragment() {
             galleryLauncher.launch("image/*")
         }
         binding.addTaskEditDelete.setOnClickListener {
+            try {
+                File(imageUrl).delete()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+            cameraPicture = false
             binding.addTaskImage.setImageResource(R.drawable.icon_main_50)
             imageUrl = ""
         }
-        binding.addTaskEditCamera.visibility = View.GONE
+        binding.addTaskEditCamera.setOnClickListener {
+            dispatchTakePictureIntent()
+        }
         binding.addTaskAddBtn.setOnClickListener {
             val day: Int = binding.addTasKDatePicker.dayOfMonth
             val month: Int = binding.addTasKDatePicker.month + 1
@@ -118,14 +131,6 @@ class AddTaskFragment : Fragment() {
                 task.imageUrl = imageUrl
                 appDatabase.getTaskDao().updateTask(task)
             }
-            // TODO:
-            val openInputStream = requireActivity().contentResolver?.openInputStream(uri)
-            val file = File(requireActivity().filesDir, "${System.currentTimeMillis()}.jpg")
-            val fileOutputStream = FileOutputStream(file)
-            openInputStream?.copyTo(fileOutputStream)
-            currentFilePath = file.absolutePath
-            openInputStream?.close()
-            requireActivity().onBackPressed()
         }
 
         return binding.root
@@ -153,6 +158,7 @@ class AddTaskFragment : Fragment() {
             val uri = Uri.fromFile(File(currentFilePath))
             imageUrl = uri.toString()
             binding.addTaskImage.setImageURI(uri)
+            cameraPicture = true
         }
     }
     @Throws(IOException::class)
